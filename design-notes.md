@@ -169,9 +169,9 @@ returns
 # 30d porfolio return with daily data points
 There is two popular methods basic market value or Time-Weighted Return (TWR).
 Basic market value is simple ((Val_i - Val_{i-1}) / Val_{i-1}) but it is misleading. If you deposit money, it spikes the return. To properly answer "Portfolio Return" and measure performance, we must use Time-Weighted Return (TWR). This isolates the investment performance from cash flows.
-for simplicity
+for simplicity now basic maket value
 we need a functions to get price at date (handling weekends/closed markets with last known price. a price before the date).
-it will be usefull to have the holdings, it can be a query on transactions group by trading_item_id and date <= given date and add or subtract the quantity according the transaction type, avg(price). and ahother one for the same but only on a day '2026-02-04' to calculate have the holdings on that day. So we do not query all the transactions.
+it will be usefull to have the holdings, it can be a query on transactions group by trading_item_id and date <= given date and add or subtract the quantity according the transaction type, avg(price).
 we can at the beginning get all the holdings at the first date of the range, and then for each day we update the holdings with the transactions of that day.
 
 edge cases mainly related to if there is inconsistency of pricing data or we don't have pricing data for a given date. for example  last price date is 2026-02-04 00:00:00+00 in the csv.
