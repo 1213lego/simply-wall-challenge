@@ -2,6 +2,18 @@
 
 A REST API for managing stock portfolios and transactions, built on ASX historical price data.
 
+## Approach
+
+Before writing any code I spent time analysing and breaking down the problem. All my design thinking — data model decisions, trade-offs, API contracts, and edge cases — is documented in [`design-notes.md`](./design-notes.md). I find it useful to think on paper first, especially for the modelling part where decisions compound later.
+
+Once the design was solid I used **Claude Code** (Sonnet 4.6) as an AI pair programmer to speed up boilerplate — Prisma adapter stubs, test scaffolding, and repetitive type wiring. All the core logic (the returns algorithm, the ticker parser, the holdings calculation, the validation layer) was written and reasoned through by me; the AI helped me move faster on the scaffolding layer.
+
+The challenge was genuinely fun. The part that made me think the most was the data model: a company can have multiple trading items (different stock classes, or listed on multiple exchanges), and normalising that correctly upfront meant the rest fell into place cleanly. The other thing that required real thought was the returns calculation — handling the case where a price is not available for a given date (weekends, public holidays) without silently zeroing out the portfolio value.
+
+I also concluded that for `historical_prices` — which is by far the largest table — a slight denormalization (storing the company name or ticker alongside each price row) would speed up both reads and writes significantly at scale, avoiding joins on the hot path. That trade-off is noted in [`future.md`](./future.md) for a deeper evaluation.
+
+Things I would add with more time are collected in [`future.md`](./future.md).
+
 ## Stack
 
 - **Runtime:** Node.js + TypeScript

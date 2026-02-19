@@ -4,5 +4,4 @@ dist/
 *.csv
 coverage/
 .DS_Store
-prisma/migrations/
 *.log

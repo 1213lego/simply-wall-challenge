@@ -92,7 +92,7 @@ response
 }
 
 # bulk upload of transactions
-we are going to set here an arbitrary limit of 100000 transactions per bulk upload
+we are going to set here an arbitrary limit of 1000 transactions per bulk upload
 1. check for the existence of portfolio if not throw error
 1. we split the tickerSymbol by ':', ' ' or '.' and take the last element as the ticker_symbol and the first as the exchange_symbol
 2. we check if the trading_item exists in the database with the exchange_symbol and ticker_symbol, if not we ignore it and kept it as rejected with the reason ticker not supported

@@ -26,7 +26,7 @@ function mapPrice(p: {
 }
 
 export class PrismaHistoricalPriceAdapter implements IHistoricalPricePort {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaClient) { }
 
   async getPriceAt(tradingItemId: bigint, date: Date): Promise<HistoricalPrice | null> {
     const price = await this.prisma.historicalPrice.findUnique({
@@ -47,6 +47,7 @@ export class PrismaHistoricalPriceAdapter implements IHistoricalPricePort {
     if (!price) return null;
     return mapPrice(price);
   }
+
 
   async getPricesInRange(
     tradingItemIds: bigint[],

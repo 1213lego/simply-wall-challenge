@@ -17,5 +17,6 @@ export interface IHistoricalPricePort {
     startDate: Date,
     endDate: Date,
   ): Promise<HistoricalPrice[]>;
+  //ideally i should give only on price peer day
   bulkUpsert(data: UpsertHistoricalPriceData[]): Promise<void>;
 }
