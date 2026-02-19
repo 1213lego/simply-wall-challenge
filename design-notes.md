@@ -1,17 +1,17 @@
 # Simply wall challenge breakdown
 
-API for managing multiple portfolios and their transactions. The api initally will offer the following features:
+API for managing multiple portfolios and their transactions. The api initially will offer the following features:
 - create a new portfolio
 - bulk upload of transactions [{}, .....]
 - modifications to the transactions
    - update a transaction
    - delete transaction
-- 30d porfolio return with daily data points
+- 30d portfolio return with daily data points
 
 # Stock tickers price data source
 In this case the data came from the csv file with asx stocks. The columns are:
 COMPANY_ID,UNIQUE_SYMBOL,TICKER_SYMBOL,COMPANY_NAME,EXCHANGE_SYMBOL,EXCHANGE_COUNTRY_ISO,PRIMARY_INDUSTRY_ID,TRADING_ITEM_ID,PRICING_DATE,PRICE_CLOSE,PRICE_CLOSE_USD,SHARES_OUTSTANDING,MARKET_CAP.
-I generated a script `scripts/analyze_csv.js` with ai to confirm the data quality and structure. All rows are complete in terms of columns. Only asx exchange, no missing prices and there is the price in AUD PRICE_CLOSE and in USD PRICE_CLOSE_USD. The only thing, there is multiple rows accounting same PRICE_CLOSE to the same company and date with a slighy difference in the PRICE_CLOSE (usd)
+I generated a script `scripts/analyze_csv.js` with ai to confirm the data quality and structure. All rows are complete in terms of columns. Only asx exchange, no missing prices and there is the price in AUD PRICE_CLOSE and in USD PRICE_CLOSE_USD. The only thing, there is multiple rows accounting same PRICE_CLOSE to the same company and date with a slight difference in the PRICE_CLOSE (usd)
 
 
 
@@ -48,7 +48,7 @@ historical_prices {
 }
 
 ## portfolio
-A simply portfolio with a id and name.
+A simple portfolio with a id and name.
 portfolios {
     id uuid primary default uuid
     name varchar(255) not null
@@ -70,8 +70,8 @@ for simplicity asume all will be in AUD, so we do not need to worry about curren
 
 
 To build this challenge, I chose Node.js and TypeScript. It is the stack I am most familiar with, and I highly value the robust type safety it provides, along with the performance benefits of Node.js for heavy I/O applications.
-Will be rest api with expressjs for practicity. on real case scenario i will evauluate clients target for UIs graphql will be good pick.
-On the data storage i am picking postgresql it is good for the part of relational integrity portfolio, transactions, companies and trading_items. Also it brings strong data types and accurate for numerics data. For historical_prices i will considering another database as this table can grow really fast and we need fast lookups for a price and inserts. I will use postgresql for now with its client pg in nodejs along with the orm prisma as it is simply and light.
+Will be rest api with expressjs for practicality. on real case scenario i will evaluate clients target for UIs graphql will be good pick.
+On the data storage i am picking postgresql it is good for the part of relational integrity portfolio, transactions, companies and trading_items. Also it brings strong data types and accuracy for numeric data. For historical_prices i will consider another database as this table can grow really fast and we need fast lookups for a price and inserts. I will use postgresql for now with its client pg in nodejs along with the orm prisma as it is simple and light.
 
 # User cases and bussines logic
 
@@ -92,12 +92,12 @@ response
 }
 
 # bulk upload of transactions
-we are going to set here an albitrary limit of 1000 transactions per bulk upload
+we are going to set here an arbitrary limit of 100000 transactions per bulk upload
 1. check for the existence of portfolio if not throw error
 1. we split the tickerSymbol by ':', ' ' or '.' and take the last element as the ticker_symbol and the first as the exchange_symbol
 2. we check if the trading_item exists in the database with the exchange_symbol and ticker_symbol, if not we ignore it and kept it as rejected with the reason ticker not supported
 3. we insert the transaction in the database
-Edge cases inventory validation ej sell 100 of BHP but has nerver bough any before
+Edge cases inventory validation ej sell 100 of BHP but has never bought any before
 POST /portfolios/:id/transactions
 [
     BulkTransactionItem {
@@ -166,12 +166,12 @@ returns
 }
 
 
-# 30d porfolio return with daily data points
-There is two popular methods basic market value or Time-Weighted Return (TWR).
+# 30d portfolio return with daily data points
+There are two popular methods basic market value or Time-Weighted Return (TWR).
 Basic market value is simple ((Val_i - Val_{i-1}) / Val_{i-1}) but it is misleading. If you deposit money, it spikes the return. To properly answer "Portfolio Return" and measure performance, we must use Time-Weighted Return (TWR). This isolates the investment performance from cash flows.
-for simplicity now basic maket value
+for simplicity now basic market value
 we need a functions to get price at date (handling weekends/closed markets with last known price. a price before the date).
-it will be usefull to have the holdings, it can be a query on transactions group by trading_item_id and date <= given date and add or subtract the quantity according the transaction type, avg(price).
+it will be useful to have the holdings, it can be a query on transactions group by trading_item_id and date <= given date and add or subtract the quantity according the transaction type, avg(price).
 we can at the beginning get all the holdings at the first date of the range, and then for each day we update the holdings with the transactions of that day.
 
 edge cases mainly related to if there is inconsistency of pricing data or we don't have pricing data for a given date. for example  last price date is 2026-02-04 00:00:00+00 in the csv.
