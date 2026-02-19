@@ -14,6 +14,19 @@ I also concluded that for `historical_prices` — which is by far the largest ta
 
 Things I would add with more time are collected in [`future.md`](./future.md).
 
+## Shortcuts and assumptions
+
+- **Currency**: all transactions are assumed to be in AUD — no currency conversion is applied. The `currency` field is stored but not used in calculations.
+- **Returns method**: basic market value `(V_end − V_start) / V_start` is used instead of TWR. TWR is more correct for measuring investment performance independently of cash flows, but basic market value was chosen for simplicity. Noted in `future.md`.
+- **Sell validation**: sells that exceed current holdings are accepted with a warning in the response rather than rejected. No hard inventory enforcement.
+- **Price gaps**: weekends and public holidays are handled by carrying forward the last known closing price. If no price exists at all for a held item, its contribution to portfolio value is 0.
+- **CSV duplicates**: rows with the same `(tradingItemId, pricingDate)` are silently ignored on upsert via a unique constraint — this was observed in the dataset (same date, same company, slightly different USD price).
+- **Database**: PostgreSQL is used for all tables including `historical_prices`. At scale that table would benefit from a time-series database or denormalisation — acknowledged in `future.md`.
+- **Bulk upload limit**: capped at 1 000 transactions per API request — an arbitrary limit to keep request sizes reasonable.
+- **No authentication**: portfolios are not scoped to users — no auth layer is implemented.
+- **No splits or dividends**: transaction history does not account for stock splits or dividend reinvestment.
+- **Hard deletes**: transactions are permanently deleted with no audit trail.
+
 ## Stack
 
 - **Runtime:** Node.js + TypeScript
